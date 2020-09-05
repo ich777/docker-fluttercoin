@@ -1,8 +1,52 @@
 #!/bin/bash
 export DISPLAY=:99
 
-echo "---Preparing Server---"
+CUR_V="$(${DATA_DIR}/fluttercoin-qt --help 2>/dev/null | grep "version" | head -1 | cut -d 'v' -f3 | cut -d '-' -f1)"
+LAT_V="$(wget -qO- https://github.com/ich777/versions/raw/master/FlutterCoin | grep LATEST | cut -d '=' -f2)"
 
+if [ -z "$LAT_V" ]; then
+	if [ ! -z "$CUR_V" ]; then
+		echo "---Can't get latest version of FlutterCoin falling back to v$CUR_V---"
+		LAT_V="$CUR_V"
+	else
+		echo "---Something went wrong, can't get latest version of FlutterCoin, putting container into sleep mode---"
+		sleep infinity
+	fi
+fi
+
+echo "---Version Check---"
+if [ -z "$CUR_V" ]; then
+	echo "---FlutterCoin not installed, installing---"
+    cd ${DATA_DIR}
+	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/FlutterCoin-$LAT_V.zip https://github.com/ofeefee/fluttercoin/releases/download/v$LAT_V-flt/fluttercoin-64-linux-v$LAT_V.zip ; then
+    	echo "---Sucessfully downloaded FlutterCoin---"
+    else
+    	echo "---Something went wrong, can't download FlutterCoin, putting container in sleep mode---"
+        sleep infinity
+    fi
+	unzip -o ${DATA_DIR}/FlutterCoin-$LAT_V.zip
+	rm -R ${DATA_DIR}/FlutterCoin-$LAT_V.zip
+elif [ "$CUR_V" != "$LAT_V" ]; then
+	echo "---Version missmatch, installed v$CUR_V, downloading and installing latest v$LAT_V...---"
+    cd ${DATA_DIR}
+	find . -maxdepth 1 -type f -print0 | xargs -0 -I {} rm -R {} 2&>/dev/null
+	rm -R ${DATA_DIR}/themes 2>/dev/null
+	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/FlutterCoin-$LAT_V.zip https://github.com/ofeefee/fluttercoin/releases/download/v$LAT_V-flt/fluttercoin-64-linux-v$LAT_V.zip ; then
+    	echo "---Sucessfully downloaded FlutterCoin---"
+    else
+    	echo "---Something went wrong, can't download FlutterCoin, putting container in sleep mode---"
+        sleep infinity
+    fi
+	unzip -o ${DATA_DIR}/FlutterCoin-$LAT_V.zip
+	rm -R ${DATA_DIR}/FlutterCoin-$LAT_V.zip
+elif [ "$CUR_V" == "$LAT_V" ]; then
+	echo "---FlutterCoin v$CUR_V up-to-date---"
+fi
+
+echo "---Preparing Server---"
+if [ ! -d ${DATA_DIR}/.fluttercoin ]; then
+	mkdir ${DATA_DIR}/.fluttercoin
+fi
 echo "---Resolution check---"
 if [ -z "${CUSTOM_RES_W} ]; then
 	CUSTOM_RES_W=1024
@@ -41,8 +85,6 @@ echo "---Starting noVNC server---"
 websockify -D --web=/usr/share/novnc/ --cert=/etc/ssl/novnc.pem 8080 localhost:5900
 sleep 2
 
-echo "---Container under Construction---"
-sleep infinity
-
 echo "---Starting FlutterCoin---"
 cd ${DATA_DIR}
+${DATA_DIR}/fluttercoin-qt ${EXTRA_PARAMS}
