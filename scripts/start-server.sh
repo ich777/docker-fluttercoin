@@ -1,7 +1,7 @@
 #!/bin/bash
 export DISPLAY=:99
 
-CUR_V="$(${DATA_DIR}/fluttercoin-qt --help 2>/dev/null | grep "version" | head -1 | cut -d 'v' -f3 | cut -d '-' -f1)"
+CUR_V="$(find ${DATA_DIR} -name instv* | cut -d 'v' -f2 )"
 LAT_V="$(wget -qO- https://github.com/ich777/versions/raw/master/FlutterCoin | grep LATEST | cut -d '=' -f2)"
 
 if [ -z "$LAT_V" ]; then
@@ -26,6 +26,7 @@ if [ -z "$CUR_V" ]; then
     fi
 	unzip -o ${DATA_DIR}/FlutterCoin-$LAT_V.zip
 	rm -R ${DATA_DIR}/FlutterCoin-$LAT_V.zip
+	touch ${DATA_DIR}/instv$LAT_V
 elif [ "$CUR_V" != "$LAT_V" ]; then
 	echo "---Version missmatch, installed v$CUR_V, downloading and installing latest v$LAT_V...---"
     cd ${DATA_DIR}
@@ -39,6 +40,7 @@ elif [ "$CUR_V" != "$LAT_V" ]; then
     fi
 	unzip -o ${DATA_DIR}/FlutterCoin-$LAT_V.zip
 	rm -R ${DATA_DIR}/FlutterCoin-$LAT_V.zip
+	touch ${DATA_DIR}/instv$LAT_V
 elif [ "$CUR_V" == "$LAT_V" ]; then
 	echo "---FlutterCoin v$CUR_V up-to-date---"
 fi
