@@ -11,7 +11,6 @@ RUN export TZ=Europe/Rome && \
 	sed -i '/    document.title =/c\    document.title = "Fluttercoin - noVNC";' /usr/share/novnc/app/ui.js && \
 	rm /usr/share/novnc/app/images/icons/*
 
-
 ENV DATA_DIR=/fluttercoin
 ENV CUSTOM_RES_W=1024
 ENV CUSTOM_RES_H=768
@@ -31,7 +30,7 @@ ADD /scripts/ /opt/scripts/
 COPY /conf/ /etc/.fluxbox/
 RUN chmod -R 770 /opt/scripts/
 
-EXPOSE 8080
+EXPOSE 8080 7408 7474
 
 #Server Start
 ENTRYPOINT ["/opt/scripts/start.sh"]
