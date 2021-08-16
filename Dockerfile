@@ -6,7 +6,7 @@ RUN export TZ=Europe/Rome && \
 	apt-get update && \
 	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
 	echo $TZ > /etc/timezone && \
-	apt-get -y install --no-install-recommends libqtgui4 unzip && \
+	apt-get -y install --no-install-recommends libqt5gui5 unzip && \
 	rm -rf /var/lib/apt/lists/* && \
 	sed -i '/    document.title =/c\    document.title = "Fluttercoin - noVNC";' /usr/share/novnc/app/ui.js && \
 	rm /usr/share/novnc/app/images/icons/*
