@@ -23,6 +23,7 @@ docker run --name Fluttercoin-Wallet -d \
     -p 8080:8080 -p 7408:7408 -p 7474:7474 \
     --env 'EXTRA_PARAMS=-bind=0.0.0.0' \
     --restart=unless-stopped \
+    --volume /path/to/fluttercoin:/fluttercoin \
     ich777/fluttercoin
 ```
 
