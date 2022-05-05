@@ -9,6 +9,7 @@ This is a community driven triple hybrid coin and the very first to offer a high
 
 **UPDATED NOTICE:** The container will check on every start/restart if there is a newer version available.
 
+
 ## Env params
 | Name | Value | Example |
 | --- | --- | --- |
